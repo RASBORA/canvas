@@ -78,13 +78,19 @@ class Circle{
   }
 
   draw_wave(ctx,my){
-    ctx.fillStyle = this.color;
+    ctx.strokeStyle = this.color;
+
+    ctx.beginPath();
 
     this.x_list.reverse();
+    //ctx.moveTo(x,y);
     for(let y=0;y<max_h;y++){
-      ctx.fillRect(this.x_list[y], my+y, 1, 1);
+      ctx.lineTo(this.x_list[y], my+y);
     }
     this.x_list.reverse();
+
+    ctx.stroke();
+
     if(this.x_list.length>max_h+100)this.x_list.shift();
   }
 
