@@ -37,6 +37,8 @@
 
       camera.lookAt(grid.position);
 
+
+
       renderer.render(scene, camera);
 
     }
@@ -90,7 +92,14 @@
 
     var div = document.getElementById("shapecanvas2");
     var renderer = new THREE.WebGLRenderer();
+
     renderer.setSize(window.innerWidth,window.innerHeight);
+    window.onresize = (function (r) {
+      return function(){
+        r.setSize(window.innerWidth,window.innerHeight);
+      }
+    }(renderer));
+
     renderer.setClearColor(0x000000, 1);
 
     div.appendChild( renderer.domElement );
@@ -104,6 +113,7 @@ body{
   margin:0px;
   padding:0px;
   overflow:hidden;
+  background-color: #000;
 }
 </style>
 
@@ -111,7 +121,7 @@ body{
 </head>
 <body onload="draw3D();">
 
-  <span id="shapecanvas2" style="border: none;" width="1024" height="500"></span>
+  <span id="shapecanvas2" style="border: none;" width="1024" height="500">Use compatible browser(chrome, firefox...other WebGL supported browsers.).</span>
 
   <br/>
   </body>
