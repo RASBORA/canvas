@@ -1,0 +1,130 @@
+<!doctype html>
+<html>
+<head>
+  <title>GRID 01</title>
+  <script src="three.js" ></script>
+  <script src="OrbitControls.js"></script>
+  <script src="text_board_canvas.js"></script>
+  <script type="text/javascript">
+
+  function rand_between(v1,v2){
+    return Math.random() * (v2-v1) + v1;
+  }
+
+  function draw3D()  {
+    var angle = 0;
+    var radius = 100;
+
+    function rand_between(v1,v2){
+      return Math.random() * (v2-v1) + v1;
+    }
+
+    function animate() {
+      requestAnimationFrame(animate);
+
+      cube.rotateY(Math.PI/180);
+      cube.rotateX(Math.PI/180);
+
+      angle += Math.PI / 720;
+      var radius = 100;
+      camera.position.x = - Math.cos(angle) * radius;
+      camera.position.z = - Math.sin(angle) * radius;
+
+      vertices = grid.geometry.vertices
+
+      vertices[Math.floor(rand_between(0,vertices.length))].z = rand_between(-2,2);
+      grid.geometry.verticesNeedUpdate=true
+
+      camera.lookAt(grid.position);
+
+
+
+      renderer.render(scene, camera);
+
+    }
+
+    var geo = new THREE.PlaneGeometry(100, 100, 16, 16);
+    var grid = new THREE.Mesh(geo, new THREE.MeshBasicMaterial({color: 0x5DC392, wireframe: true}));
+    grid.rotation.x = Math.PI/2;
+
+    for (let i = 0; i < grid.geometry.vertices.length; i++ ) {
+      var vertex = grid.geometry.vertices[ i ];
+      vertex.z = rand_between(-1,1);
+      grid.geometry.verticesNeedUpdate=true
+    }
+
+
+    geo = new THREE.CubeGeometry(10,10,10);
+    var cube = new THREE.Mesh(geo,new THREE.MeshBasicMaterial({color: 0xC41D10, wireframe: true })   );
+    cube.position.set(0,15,0);
+
+    var textBoardObject = new TextBoardObject({
+    fontSize : 11, // [%]
+    textColor : {r:1, g:1, b:1, a:1},//文字色
+    backgroundColor : { r:1, g:1, b:1, a:0.0 },//背景色（RGBA値を0から１で指定）
+    boardWidth : 100,  //マッピング対象平面オブジェクトの横幅
+    boardHeight : 100, //マッピング対象平面オブジェクトの縦幅
+    fontName :"Times New Roman"
+    });
+    textBoardObject.clear();
+    //textBoardObject.addTextLine( "GRID");
+    textBoardObject.update();
+
+
+    // fov spect far
+    var camera = new THREE.PerspectiveCamera(  45, 1024/500,0.1, 5000);
+    camera.rotation.y = Math.PI/180 * 45;
+    camera.position.z = 100;
+    camera.position.y = 20;
+
+
+
+
+    var multi = new THREE.Object3D()
+    multi.add(cube);
+    multi.add(grid);
+    multi.position.z = 0;
+
+    var scene = new THREE.Scene();
+    scene.fog = new THREE.FogExp2(0x365788, 0.015);
+    scene.add(multi);
+    scene.add( textBoardObject.cleatePlaneObject() );
+
+    var div = document.getElementById("shapecanvas2");
+    var renderer = new THREE.WebGLRenderer();
+
+    renderer.setSize(window.innerWidth,window.innerHeight);
+    window.onresize = (function (r) {
+      return function(){
+        r.setSize(window.innerWidth,window.innerHeight);
+      }
+    }(renderer));
+
+    renderer.setClearColor(0x000000, 1);
+
+    div.appendChild( renderer.domElement );
+    animate();
+
+  }
+
+</script>
+<style>
+body{
+  margin:0px;
+  padding:0px;
+  overflow:hidden;
+  background-color: #000;
+}
+</style>
+
+
+</head>
+<body onload="draw3D();">
+
+  <span id="shapecanvas2" style="border: none;" width="1024" height="500">Use WebGL supported browsers.</span>
+
+  <br/>
+  </body>
+
+
+</html>
